@@ -7,7 +7,7 @@ const Author = () => {
         <div className="author-div comm-box">
             <div><Avatar size={100} src="../images/logo.JPG" /></div>
             <div className="author-introduction">
-                999999999
+                现实会告诉你，不努力就会被生活给踩死。无需找什么借口，一无所有，就是拼的理由。
                 <Divider>
                     社交账号
                 </Divider>
