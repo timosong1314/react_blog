@@ -18,6 +18,40 @@ module.exports = appInfo => {
   // add your middleware config here
   config.middleware = [];
 
+  //mysql
+  config.mysql = {
+    // 单数据库信息配置
+    client: {
+      // host
+      host: '49.234.73.60',
+      // 端口号
+      port: '3306',
+      // 用户名
+      user: 'root',
+      // 密码
+      password: 'MYsql123.',
+      // 数据库名
+      database: 'react_blog',
+    },
+    // 是否加载到 app 上，默认开启
+    app: true,
+    // 是否加载到 agent 上，默认关闭
+    agent: false,
+  };
+
+  config.security = {
+    scrf: {
+      enable: false
+    },
+    domainWhiteList: ['*']
+  }
+
+  config.cors = {
+    orgin: 'http://localhost:3000',
+    credentials: true,
+    allowMethods: "GET,HEAD,PUT,DELETE,POST,PATCH,OPTIONS"
+  }
+
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
