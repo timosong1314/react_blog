@@ -40,7 +40,7 @@ module.exports = appInfo => {
   };
 
   config.security = {
-    scrf: {
+    csrf: {
       enable: false
     },
     domainWhiteList: ['*']
@@ -48,7 +48,7 @@ module.exports = appInfo => {
 
   config.cors = {
     orgin: 'http://localhost:3000',
-    credentials: true,
+    credentials: true,   //允许cookies可以跨域
     allowMethods: "GET,HEAD,PUT,DELETE,POST,PATCH,OPTIONS"
   }
 
