@@ -23,6 +23,11 @@ function AddArticle(props) {
 
     useEffect(() => {
         getTypeInfo()
+        let tempId = props.match.params.id
+        if (tempId) {
+            setArticleId(tempId)
+            getArticleById(tempId)
+        }
     }, [])
 
     marked.setOptions({
@@ -84,7 +89,73 @@ function AddArticle(props) {
             message.error("发布日期不能为空")
             return false
         }
-        message.success("检验通过")
+
+        let dataProps = {}   //传递到接口的参数
+        dataProps.type_id = selectedType
+        dataProps.title = articleTitle
+        dataProps.article_content = articleContent
+        dataProps.introduce = introducemd
+        dataProps.addTime = showDate
+
+        if (articleId == 0) {
+            dataProps.view_count = Math.ceil(Math.random() * 100) + 1000
+            axios({
+                method: 'post',
+                url: servicePath.addArticle,
+                data: dataProps,
+                withCredentials: true
+            }).then(
+                res => {
+                    setArticleId(res.data.insertId)
+                    if (res.data.isSuccess) {
+                        message.success('文章添加成功')
+                    } else {
+                        message.error('文章添加失败');
+                    }
+
+                }
+            )
+        } else {
+            dataProps.id = articleId
+            axios({
+                method: 'post',
+                url: servicePath.updateArticle,
+                header: { 'Access-Control-Allow-Origin': '*' },
+                data: dataProps,
+                withCredentials: true
+            }).then(
+                res => {
+
+                    if (res.data.isSuccess) {
+                        message.success('文章保存成功')
+                    } else {
+                        message.error('保存失败');
+                    }
+
+
+                }
+            )
+        }
+    }
+
+
+    const getArticleById = (id) => {
+        axios(servicePath.getArticleById + id, {
+            withCredentials: true,
+            header: { 'Access-Control-Allow-Origin': '*' }
+        }).then(
+            res => {
+                setArticleTitle(res.data.data[0].title)
+                setArticleContent(res.data.data[0].article_content)
+                let html = marked(res.data.data[0].article_content)
+                setMarkdownContent(html)
+                setIntroducemd(res.data.data[0].introduce)
+                let tmpInt = marked(res.data.data[0].introduce)
+                setIntroducehtml(tmpInt)
+                setShowDate(res.data.data[0].addTime)
+                setSelectType(res.data.data[0].typeId)
+            }
+        )
     }
 
     return (
@@ -110,7 +181,7 @@ function AddArticle(props) {
                     <br />
                     <Row gutter={10}>
                         <Col span={12}>
-                            <TextArea className="markdown-content" rows={35} placeholder="文章内容" onChange={changeContent}></TextArea>
+                            <TextArea className="markdown-content" value={articleContent} rows={35} placeholder="文章内容" onChange={changeContent}></TextArea>
                         </Col>
                         <Col span={12}>
                             <div className="show-html" dangerouslySetInnerHTML={{ __html: markdownContent }}></div>
@@ -126,7 +197,7 @@ function AddArticle(props) {
                         </Col>
                         <Col span={24}>
                             <br />
-                            <TextArea rows={4} placeholder="文章简介" onChange={changeIntroduce}></TextArea>
+                            <TextArea rows={4} placeholder="文章简介" value={introducemd} onChange={changeIntroduce}></TextArea>
                             <br />
                             <div className="introduce-html" dangerouslySetInnerHTML={{ __html: '文章简介' + introducehtml }}></div>
                         </Col>
